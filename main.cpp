@@ -1,6 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <cmath> 
+#include <iostream>
  
 /*  
 Лабораторная работа №15. 
@@ -90,7 +91,7 @@ bool Digit_2_4_6(int x) // проверка наличия цифр 2, 4, 6
   { 
     s = x % 10; 
      
-    if (s == 2  s == 4  s == 6) 
+    if (s == 2 || s == 4 || s == 6) 
     { 
       flag = true; 
       break; 
@@ -117,8 +118,10 @@ void Del(PList &head) // удаление
       p->pred = p1->pred; 
       delete(p1); 
     } 
-     
-    else p = p->next; 
+    else 
+    {
+      p = p->next;
+    }  
   } 
 } 
  
@@ -187,30 +190,29 @@ int Posled_Cifr(int x)
  
 bool Proverka(PList &head) 
 { 
-  bool flag = false; 
-  PList p, p1; 
+  PList p;
+  PList p1; 
   p = head->next; 
   p1 = p->next; 
    
   while (p1 != head) 
   { 
     if ((Perv_Cifr(p->data) > Perv_Cifr(p1->data)) || (Posled_Cifr(p->data) > Posled_Cifr(p1->data))) 
-    { 
-      flag = true; 
-      break; 
+    {  
+      return true; 
     } 
      
     p = p1; 
     p1 = p1->next; 
   } 
    
-  return flag; 
+  return false; 
 } 
  
 void Sort(PList &head) // упорядочивание по не убыванию 
 { 
-  PList p, p1; 
-  int x; 
+  PList p;
+  PList p1; 
   p = head->next; 
    
   while ((p->next) != head) 
@@ -221,7 +223,7 @@ void Sort(PList &head) // упорядочивание по не убывани�
     { 
       if ((p->data) > (p1->data)) 
       { 
-        x = p->data; 
+        int x = p->data; 
         p->data = p1->data; 
         p1->data = x; 
       } 
@@ -232,20 +234,24 @@ void Sort(PList &head) // упорядочивание по не убывани�
     p = p->next; 
   } 
 } 
+
  
-main () 
+int main () 
 { 
   PList head; 
   Spisok(head); 
-   
-  if (Proverka(head) == true) 
-  { 
+
+  if (Proverka(head))
+  {
     Del(head); 
     Dubl(head); 
   } 
-   
   else 
-    Sort(head); 
+  {
+    Sort(head);
+  }
      
   print_Spisok(head); 
+
+  return 0;
 }
