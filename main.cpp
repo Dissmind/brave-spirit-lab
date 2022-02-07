@@ -307,7 +307,7 @@ int main ()
   std::cout << "Start list:" << std::endl;
   displayList(head);
 
-  if (checkTaskAlgorithm(head))
+  if (!checkTaskAlgorithm(head))
   {
     remove(head, &checkDigital2_4_6); 
     dublication(head, &checkDigital6_9); 
