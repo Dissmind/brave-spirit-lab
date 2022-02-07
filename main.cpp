@@ -101,30 +101,31 @@ void writeToFile(PList &head)
  
 
 
-bool Digit_2_4_6(int x) // проверка наличия цифр 2, 4, 6 
-{ 
-  bool flag = false; 
-  int s; 
-   
-  while (x > 0) 
+bool checkDigital2_4_6(int value)
+{  
+  while (value > 0) 
   { 
-    s = x % 10; 
+    int lastNum = value % 10; 
      
-    if (s == 2 || s == 4 || s == 6) 
+    if 
+      (
+        lastNum == 2 || 
+        lastNum == 4 || 
+        lastNum == 6
+      ) 
     { 
-      flag = true; 
-      break; 
+      return true;
     } 
      
-    x = x / 10; 
+    value /= 10; 
   } 
    
-  return flag; 
+  return false; 
 } 
 
 
  
-void Del(PList &head) // удаление 
+void remove(PList &head, bool(*candition)(int)) 
 { 
   PList pFirst;
   PList pSecond;
@@ -133,7 +134,7 @@ void Del(PList &head) // удаление
    
   while (pFirst != head) 
   { 
-    if (!Digit_2_4_6(pFirst->data)) 
+    if (!checkDigital2_4_6(pFirst->data)) 
     { 
       pSecond = pFirst; 
       pFirst = pFirst->next; 
@@ -152,7 +153,7 @@ void Del(PList &head) // удаление
  
 
 
-bool Digit_6_9(int value) // проверка наличия цифр 6, 9 
+bool checkDigital6_9(int value) // проверка наличия цифр 6, 9 
 { 
   int temp; 
    
@@ -173,7 +174,7 @@ bool Digit_6_9(int value) // проверка наличия цифр 6, 9
  
 
 
-void Dubl(PList &head) // дублирование 
+void dublication(PList &head, bool(*check)(int))
 { 
   PList pFirst; 
   PList pSecond;
@@ -182,7 +183,7 @@ void Dubl(PList &head) // дублирование
    
   while (pFirst != head) 
   { 
-    if (Digit_6_9(pFirst->data) == true) 
+    if (check(pFirst->data)) 
     { 
       pSecond = new List; 
 
@@ -205,7 +206,7 @@ void Dubl(PList &head) // дублирование
  
 
 
-int Perv_Cifr(int value) 
+int firstDigitalOnNum(int value) 
 {  
   while (value > 9) {
     value /= 10;
@@ -216,14 +217,14 @@ int Perv_Cifr(int value)
  
 
 
-int Posled_Cifr(int value) 
+int lastDigitalOnNum(int value) 
 {      
   return value % 10;    
 } 
  
 
 
-bool Proverka(PList &head) 
+bool checkTaskAlgorithm(PList &head) 
 { 
   PList pFirst;
   PList pSecond; 
@@ -233,7 +234,11 @@ bool Proverka(PList &head)
    
   while (pSecond != head) 
   { 
-    if ((Perv_Cifr(pFirst->data) > Perv_Cifr(pSecond->data)) || (Posled_Cifr(pFirst->data) > Posled_Cifr(pSecond->data))) 
+    if 
+      (
+        (firstDigitalOnNum(pFirst->data) > firstDigitalOnNum(pSecond->data)) || 
+        (lastDigitalOnNum(pFirst->data) > lastDigitalOnNum(pSecond->data))
+      ) 
     {  
       return true; 
     } 
@@ -299,13 +304,13 @@ int main ()
   readToFile(head); 
 
   // TODO: For test
-  // std::cout << "Start list:" << std::endl;
-  // displayList(head);
+  std::cout << "Start list:" << std::endl;
+  displayList(head);
 
-  if (Proverka(head))
+  if (checkTaskAlgorithm(head))
   {
-    Del(head); 
-    Dubl(head); 
+    remove(head, &checkDigital2_4_6); 
+    dublication(head, &checkDigital6_9); 
   } 
   else 
   {
@@ -314,8 +319,8 @@ int main ()
      
 
   // TODO: For test
-  // std::cout << std::endl << "Finish list:" << std::endl;
-  // displayList(head);
+  std::cout << std::endl << "Finish list:" << std::endl;
+  displayList(head);
      
   writeToFile(head); 
 
