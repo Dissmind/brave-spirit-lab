@@ -21,67 +21,86 @@
 
 using namespace std; 
  
+
+
 struct List  
 { 
   int data; 
   struct List *next, *pred; 
 };
 
+
+
 typedef List *PList; 
  
-void Spisok(PList &head) 
+
+
+void readToFile(PList &head)
 { 
   FILE *Fin; 
   Fin = fopen("input15.txt", "r"); 
-  int x; 
-  PList p, p1; 
+  
+  int temp; 
+
+  PList pFirst; 
+  PList pSecond; 
+  
   head = new List; 
+
   head->data = 0; 
   head->next = NULL; 
   head->pred=NULL; 
   
   while (!feof(Fin)) 
   { 
-    fscanf(Fin, "%d", &x); 
-    p = new List; 
-    p->data = x; 
+    fscanf(Fin, "%d", &temp); 
+    
+    pFirst = new List; 
+    pFirst->data = temp; 
      
-    if ((head->next) == NULL) 
+    if (head->next == NULL) 
     { 
-      head->next = p; 
-      p->pred = head; 
+      head->next = pFirst; 
+      pFirst->pred = head; 
     } 
      
     else 
     { 
-     p1->next = p; 
-     p->pred = p1; 
+     pSecond->next = pFirst; 
+     pFirst->pred = pSecond; 
     } 
      
-    p1 = p; 
+    pSecond = pFirst; 
   } 
    
-  p->next = head; 
-  head->pred = p; 
+  pFirst->next = head; 
+  head->pred = pFirst; 
+
   fclose(Fin); 
 } 
- 
-void print_Spisok(PList &head) 
+
+
+
+void writeToFile(PList &head)
 { 
-  FILE *Fout; 
-  Fout = fopen("output15.txt", "w"); 
+  FILE *fileOut; 
+  
+  fileOut = fopen("output15.txt", "w"); 
+
   PList p; 
   p = head->next; 
    
   while (p != head) 
   { 
-    fprintf(Fout, "%d  ", p->data); 
+    fprintf(fileOut, "%d  ", p->data); 
     p = p->next; 
   } 
    
-  fclose(Fout); 
+  fclose(fileOut); 
 } 
  
+
+
 bool Digit_2_4_6(int x) // проверка наличия цифр 2, 4, 6 
 { 
   bool flag = false; 
@@ -102,144 +121,186 @@ bool Digit_2_4_6(int x) // проверка наличия цифр 2, 4, 6
    
   return flag; 
 } 
+
+
  
 void Del(PList &head) // удаление 
 { 
-  PList p, p1; 
-  p = head->next; 
+  PList pFirst;
+  PList pSecond;
+
+  pFirst = head->next; 
    
-  while (p != head) 
+  while (pFirst != head) 
   { 
-    if (Digit_2_4_6(p->data) == false) 
+    if (!Digit_2_4_6(pFirst->data)) 
     { 
-      p1 = p; 
-      p = p->next; 
-      p1->pred->next = p; 
-      p->pred = p1->pred; 
-      delete(p1); 
+      pSecond = pFirst; 
+      pFirst = pFirst->next; 
+      
+      pSecond->pred->next = pFirst; 
+      pFirst->pred = pSecond->pred; 
+
+      delete(pSecond); 
     } 
     else 
     {
-      p = p->next;
+      pFirst = pFirst->next;
     }  
   } 
 } 
  
-bool Digit_6_9(int x) // проверка наличия цифр 6, 9 
+
+
+bool Digit_6_9(int value) // проверка наличия цифр 6, 9 
 { 
-  bool flag = false; 
-  int s; 
+  int temp; 
    
-  while (x > 0) 
+  while (value > 0) 
   { 
-    s = x % 10; 
+    temp = value % 10; 
      
-    if (s == 6 || s == 9) 
-    { 
-      flag = true; 
-      break; 
-    } 
-     
-    x = x / 10; 
-  } 
-   
-  return flag; 
-} 
- 
-void Dubl(PList &head) // дублирование 
-{ 
-  PList p, p1; 
-  p = head->next; 
-   
-  while (p != head) 
-  { 
-    if (Digit_6_9(p->data) == true) 
-    { 
-      p1 = new List; 
-      p1->data = p->data; 
-      p1->next = p->next; 
-      p->next->pred = p1; 
-      p->next = p1; 
-      p1->pred = p; 
-      p = p->next->next; 
-    } 
-     
-    else  
-      p = p->next; 
-  } 
-} 
- 
-int Perv_Cifr(int x) 
-{ 
-  int y = x; 
-   
-  while (y > 9) 
-    y = y / 10; 
-     
-  return y; 
-} 
- 
-int Posled_Cifr(int x) 
-{ 
-  int y = x; 
-   
-  y = y % 10; 
-     
-  return y;    
-} 
- 
-bool Proverka(PList &head) 
-{ 
-  PList p;
-  PList p1; 
-  p = head->next; 
-  p1 = p->next; 
-   
-  while (p1 != head) 
-  { 
-    if ((Perv_Cifr(p->data) > Perv_Cifr(p1->data)) || (Posled_Cifr(p->data) > Posled_Cifr(p1->data))) 
+    if (temp == 6 || temp == 9) 
     {  
       return true; 
     } 
      
-    p = p1; 
-    p1 = p1->next; 
+    value = value / 10; 
   } 
    
   return false; 
 } 
  
-void Sort(PList &head) // упорядочивание по не убыванию 
+
+
+void Dubl(PList &head) // дублирование 
 { 
-  PList p;
-  PList p1; 
-  p = head->next; 
+  PList pFirst; 
+  PList pSecond;
+
+  pFirst = head->next; 
    
-  while ((p->next) != head) 
+  while (pFirst != head) 
   { 
-    p1 = p->next; 
-     
-    while (p1 != head) 
+    if (Digit_6_9(pFirst->data) == true) 
     { 
-      if ((p->data) > (p1->data)) 
-      { 
-        int x = p->data; 
-        p->data = p1->data; 
-        p1->data = x; 
-      } 
-       
-      p1 = p1->next; 
+      pSecond = new List; 
+
+      pSecond->data = pFirst->data; 
+      pSecond->next = pFirst->next; 
+
+      pFirst->next->pred = pSecond; 
+      pFirst->next = pSecond; 
+
+      pSecond->pred = pFirst; 
+
+      pFirst = pFirst->next->next; 
+    }  
+    else 
+    {
+      pFirst = pFirst->next;
+    } 
+  } 
+} 
+ 
+
+
+int Perv_Cifr(int value) 
+{  
+  while (value > 9) {
+    value /= 10;
+  }
+     
+  return value; 
+} 
+ 
+
+
+int Posled_Cifr(int value) 
+{      
+  return value % 10;    
+} 
+ 
+
+
+bool Proverka(PList &head) 
+{ 
+  PList pFirst;
+  PList pSecond; 
+
+  pFirst = head->next; 
+  pSecond = pFirst->next; 
+   
+  while (pSecond != head) 
+  { 
+    if ((Perv_Cifr(pFirst->data) > Perv_Cifr(pSecond->data)) || (Posled_Cifr(pFirst->data) > Posled_Cifr(pSecond->data))) 
+    {  
+      return true; 
     } 
      
-    p = p->next; 
+    pFirst = pSecond; 
+    pSecond = pSecond->next; 
+  } 
+   
+  return false; 
+} 
+
+
+ 
+void Sort(PList &head) // упорядочивание по не убыванию 
+{ 
+  PList pActual;
+  PList pNext; 
+
+  pActual = head->next; 
+   
+  while (pActual->next != head) 
+  { 
+    pNext = pActual->next; 
+     
+    while (pNext != head) 
+    { 
+      if (pActual->data > pNext->data) 
+      { 
+        // Swap
+        int x = pActual->data; 
+        pActual->data = pNext->data; 
+        pNext->data = x; 
+      } 
+       
+      pNext = pNext->next; 
+    } 
+     
+    pActual = pActual->next; 
   } 
 } 
 
+
+
+void displayList(PList &head) 
+{
+  PList p = head->next; 
+   
+  while (p != head) 
+  { 
+    std::cout << p->data << " ";
+
+    p = p->next; 
+  } 
+
+  std::cout << std::endl;
+}
  
+
+
 int main () 
 { 
   PList head; 
-  Spisok(head); 
+  readToFile(head); 
+
+  // TODO: For test
+  // std::cout << "Start list:" << std::endl;
+  // displayList(head);
 
   if (Proverka(head))
   {
@@ -251,7 +312,12 @@ int main ()
     Sort(head);
   }
      
-  print_Spisok(head); 
+
+  // TODO: For test
+  // std::cout << std::endl << "Finish list:" << std::endl;
+  // displayList(head);
+     
+  writeToFile(head); 
 
   return 0;
 }
